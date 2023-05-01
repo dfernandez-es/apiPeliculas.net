@@ -30,7 +30,7 @@ namespace peliculasapi.Controllers
             return Ok(dtos);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetGenero")]
         public async Task<ActionResult<GeneroDTO>> Get(int id){
             var genero = await Context.Generos.FirstOrDefaultAsync(x => x.Id == id);
             if(genero == null) return NotFound();
@@ -58,8 +58,8 @@ namespace peliculasapi.Controllers
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id){
-            var genero = await Context.Generos.FirstOrDefaultAsync(x => x.Id == id);
-            if(genero == null) return NotFound();
+            var genero = await Context.Generos.AnyAsync(x => x.Id == id);
+            if(!genero) return NotFound();
             Context.Remove(new Genero{Id = id});
             await Context.SaveChangesAsync();
             return NoContent();
