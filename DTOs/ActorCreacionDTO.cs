@@ -15,6 +15,6 @@ namespace peliculasapi.DTOs
         public DateTime fechaNacimiento { get; set; }
         [PesoArchivoValidacion(PesoMaximoEnMegaBytes: 4)]
         [TipoArchivoValidacion]
-        public IFormFile? foto { get; set; }
+        public IFormFile foto { get; set; }
     }
 }

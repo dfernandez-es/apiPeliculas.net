@@ -13,6 +13,6 @@ namespace peliculasapi.Entidades
         [StringLength(120)]
         public string nombre  { get; set; }
         public DateTime fechaNacimiento { get; set; }
-        public string? Foto { get; set; }
+        public string Foto { get; set; }
     }
 }
