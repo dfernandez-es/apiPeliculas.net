@@ -4,16 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace peliculasapi.Entidades
+namespace peliculasapi.DTOs
 {
-    public class Pelicula
+    public class PeliculaPatchDTO
     {
-        public int Id { get; set; }
         [Required]
-        [StringLength(200)]
+        [StringLength(maximumLength: 200)]
         public string Titulo { get; set; }
         public bool EnCines { get; set; }
         public DateTime FechaEstreno { get; set; }
-        public string Poster { get; set; }
     }
 }
