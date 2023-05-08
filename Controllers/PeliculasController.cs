@@ -57,6 +57,7 @@ namespace peliculasapi.Controllers
                 }
             }
 
+            AsignarOrdenActores(pelicula);
             Context.Peliculas.Add(pelicula);
             await Context.SaveChangesAsync();
             return CreatedAtRoute("GetPelicula", new {id = pelicula.Id}, Mapper.Map<PeliculaDTO>(pelicula));
@@ -64,7 +65,11 @@ namespace peliculasapi.Controllers
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm] PeliculaCreacionDTO peliculaCreacionDTO){   
-            var peliculaDB = await Context.Peliculas.FirstOrDefaultAsync(x=>x.Id == id);
+            var peliculaDB = await Context.Peliculas
+            .Include(x=>x.PeliculasActores)
+            .Include(x=>x.PeliculasGeneros)
+            .FirstOrDefaultAsync(x=>x.Id == id);
+
             if(peliculaDB == null) return NotFound();
             peliculaDB = Mapper.Map(peliculaCreacionDTO,peliculaDB);
             if(peliculaCreacionDTO.Poster != null){
@@ -75,6 +80,7 @@ namespace peliculasapi.Controllers
                     peliculaDB.Poster = await almacenadorArchivos.EditarArchivo(contenido, extension, "actores",peliculaDB.Poster,peliculaCreacionDTO.Poster.ContentType);
                 }
             }   
+            AsignarOrdenActores(peliculaDB);
             await Context.SaveChangesAsync();
             return NoContent();
         }     
@@ -102,6 +108,13 @@ namespace peliculasapi.Controllers
             return NoContent();
         }
 
+        private void AsignarOrdenActores(Pelicula pelicula){
+            if(pelicula.PeliculasActores != null){
+                for(int i = 0; i < pelicula.PeliculasActores.Count; i++){
+                    pelicula.PeliculasActores[i].Orden = i;
+                } 
+            }
+        }
 
     }
 }
