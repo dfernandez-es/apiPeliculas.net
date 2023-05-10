@@ -10,6 +10,7 @@ using peliculasapi.DTOs;
 using peliculasapi.Entidades;
 using peliculasapi.Helpers;
 using peliculasapi.Servicios;
+using System.Linq.Dynamic.Core;
 
 namespace peliculasapi.Controllers
 {
@@ -57,6 +58,17 @@ namespace peliculasapi.Controllers
                     .Select(y => y.GeneroId)
                     .Contains(filtroPeliculasDTO.GeneroId));
             }
+
+            if(!string.IsNullOrEmpty(filtroPeliculasDTO.CampoOrdenar)){
+                var tipoOrden = filtroPeliculasDTO.OrdenAscendente ? "ascending" : "descending";
+                try
+                {
+                    pelicularQueryable = pelicularQueryable.OrderBy($"{filtroPeliculasDTO.CampoOrdenar} {tipoOrden}");
+                }catch(Exception ex){
+                    return BadRequest(ex.Message);
+                }
+            }
+
             await HttpContext.InsertarParametrosPaginacion(pelicularQueryable, filtroPeliculasDTO.CantidadRegistrosPorPagina);
             var peliculas = await pelicularQueryable.Paginar(filtroPeliculasDTO.Paginacion).ToListAsync();
             return Ok(Mapper.Map<List<PeliculaDTO>>(peliculas));
